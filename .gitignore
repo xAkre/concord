@@ -11,3 +11,7 @@ venv
 # Environment Files
 
 **/*.env
+
+# Mypy
+
+.mypy_cache/
