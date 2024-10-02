@@ -34,3 +34,16 @@ class User(typing.TypedDict):
     email: typing.NotRequired[str | None]
     flags: typing.NotRequired[int]
     avatar_decoration_data: typing.NotRequired[AvatarDecorationData | None]
+
+
+class UnavailableGuild(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#unavailable-guild-object)
+    for Discord's documentation
+    """
+
+    id: Snowflake
+    unavailable: typing.Literal[True]
+
+
+__all__ = ["AvatarDecorationData", "User", "UnavailableGuild"]
