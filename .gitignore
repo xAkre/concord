@@ -12,6 +12,14 @@ venv
 
 **/*.env
 
-# Mypy
+# Mypy and Pytest
 
 .mypy_cache/
+.pytest_cache/
+
+# Generated files
+
+**/*.pyi
+**/*.pyc
+**/__pycache__
+__pycache__
