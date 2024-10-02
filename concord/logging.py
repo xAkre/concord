@@ -30,3 +30,6 @@ def setup_logger(
     logger = logging.getLogger("concord")
     logger.setLevel(log_level)
     logger.addHandler(handler)
+
+
+__all__ = ["setup_logger"]
