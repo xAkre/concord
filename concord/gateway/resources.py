@@ -46,4 +46,14 @@ class UnavailableGuild(typing.TypedDict):
     unavailable: typing.Literal[True]
 
 
-__all__ = ["AvatarDecorationData", "User", "UnavailableGuild"]
+class PartialApplication(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/topics/gateway-events#ready-ready-event-fields)
+    for Discord's documentation
+    """
+
+    id: Snowflake
+    flags: int
+
+
+__all__ = ["AvatarDecorationData", "User", "UnavailableGuild", "PartialApplication"]
