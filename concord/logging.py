@@ -5,7 +5,7 @@ from concord.sentinel import Sentinel
 
 
 def setup_logger(
-    log_level: int = logging.DEBUG,
+    log_level: int = logging.INFO,
     handler: (
         logging.Handler | None | typing.Literal[Sentinel.NOT_GIVEN]
     ) = Sentinel.NOT_GIVEN,
