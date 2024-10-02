@@ -198,11 +198,9 @@ class GatewayClient:
     async def start(self, token: str) -> None:
         """
         Start the GatewayClient connection by establishing a WebSocket connection and
-        entering the main loop. It handles automatic reconnections in case
-        of disconnections.
+        entering the main loop.
 
         :param token: The bot token used to authenticate with Discord.
-        :raises ConcordException: If no token is provided.
         """
         self._token = token
         await self._connect_and_run()
