@@ -17,6 +17,10 @@ mypy = "^1.11.2"
 line-length = 88
 target-version = ["py312"]
 
+[tool.mypy]
+python_version = "3.12"
+enable_incomplete_feature = ["NewGenericSyntax"]
+
 
 [build-system]
 requires = ["poetry-core"]
