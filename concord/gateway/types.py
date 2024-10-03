@@ -4,7 +4,7 @@
 
 import typing
 
-from .enums import GatewayReceiveOpcode, GatewaySendOpcode
+from .enums import GatewayDispatchEvent, GatewayReceiveOpcode, GatewaySendOpcode
 from .resources import PartialApplication, UnavailableGuild, User
 
 # Input (Received) Event Payloads
@@ -67,7 +67,7 @@ class GatewayDispatchEventPayload(BaseGatewayEventPayload):
     op: typing.Literal[GatewayReceiveOpcode.DISPATCH]
     d: typing.Any
     s: int | None
-    t: str | None
+    t: GatewayDispatchEvent
 
 
 class GatewayReadyEventPayload(BaseGatewayEventPayload):
