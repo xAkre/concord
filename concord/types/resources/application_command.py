@@ -9,7 +9,15 @@ from ..common import LanguageCode, Snowflake
 from .application import ApplicationIntegrationType
 from .channel import ChannelType
 
-__all__ = ("ApplicationCommand",)
+__all__ = (
+    "ApplicationCommand",
+    "ApplicationCommandType",
+    "ApplicationCommandOption",
+    "ApplicationCommandOptionType",
+    "ApplicationCommandOptionChoice",
+    "InteractionContextType",
+    "EntryPointCommandHandlerType",
+)
 
 
 APPLICATION_COMMAND_NAME_REGEX = re.compile(r"^[\w-]{1,32}$")
@@ -36,6 +44,9 @@ class ApplicationCommand(typing.TypedDict):
     integration_types: typing.NotRequired[
         collections.abc.Sequence[ApplicationIntegrationType]
     ]
+    contexts: typing.NotRequired[collections.abc.Sequence[InteractionContextType]]
+    version: Snowflake
+    handler: typing.NotRequired[EntryPointCommandHandlerType]
 
 
 class ApplicationCommandType(enum.IntEnum):
@@ -114,3 +125,13 @@ class InteractionContextType(enum.IntEnum):
     GUILD = 0
     BOT_DM = 1
     PRIVATE_CHANNEL = 2
+
+
+class EntryPointCommandHandlerType(enum.IntEnum):
+    """
+    See [here](https://discord.com/developers/docs/interactions/application-commands#application-command-object-entry-point-command-handler-types)
+    for Discord's documentation.
+    """
+
+    APP_HANDLER = 1
+    DISCORD_LAUNCH_ACTIVITY = 2
