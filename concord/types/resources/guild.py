@@ -3,8 +3,7 @@ from __future__ import annotations
 import enum
 import typing
 
-from ..common import Snowflake
-from ..enums import LanguageCode
+from ..common import LanguageCode, Snowflake
 from .emoji import Emoji
 from .role import Role
 from .sticker import Sticker

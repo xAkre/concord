@@ -3,8 +3,7 @@ from __future__ import annotations
 import enum
 import typing
 
-from ..common import Snowflake
-from ..enums import OAuth2Scopes
+from ..common import OAuth2Scopes, Snowflake
 from .guild import Guild
 from .team import Team
 from .user import User
