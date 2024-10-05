@@ -14,7 +14,7 @@ class Emoji(typing.TypedDict):
 
     id: Snowflake | None
     name: str | None
-    roles: typing.NotRequired[typing.List[Snowflake]]
+    roles: typing.NotRequired[collections.abc.Sequence[Snowflake]]
     user: typing.NotRequired[User]
     """Partial user object."""
     require_colons: typing.NotRequired[bool]

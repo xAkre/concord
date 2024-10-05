@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections.abc
 import enum
 import typing
 
@@ -22,7 +23,7 @@ class Team(typing.TypedDict):
 
     icon: str | None
     id: Snowflake
-    members: typing.List[TeamMember]
+    members: collections.abc.Sequence[TeamMember]
     name: str
     owner_user_id: Snowflake
 

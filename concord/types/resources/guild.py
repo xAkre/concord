@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections.abc
 import enum
 import typing
 
@@ -45,9 +46,9 @@ class Guild(typing.TypedDict):
     verification_level: GuildVerificationLevel
     default_message_notifications: GuildDefaultMessageNotificationLevel
     explicit_content_filter: GuildExplicitContentFilterLevel
-    roles: typing.List[Role]
-    emojis: typing.List[Emoji]
-    features: typing.List[GuildFeature]
+    roles: collections.abc.Sequence[Role]
+    emojis: collections.abc.Sequence[Emoji]
+    features: collections.abc.Sequence[GuildFeature]
     mfa_level: GuildMfaLevel
     application_id: Snowflake | None
     system_channel_id: Snowflake | None
@@ -68,7 +69,7 @@ class Guild(typing.TypedDict):
     approximate_presence_count: typing.NotRequired[int]
     welcome_screen: typing.NotRequired[GuildWelcomeScreen]
     nsfw_level: GuildNsfwLevel
-    stickers: typing.NotRequired[typing.List[Sticker]]
+    stickers: typing.NotRequired[collections.abc.Sequence[Sticker]]
     premium_progress_bar_enabled: bool
     safety_alerts_channel_id: Snowflake | None
 
@@ -214,4 +215,6 @@ class GuildWelcomeScreen(typing.TypedDict):
     """
 
     description: typing.NotRequired[str]
-    welcome_channels: typing.NotRequired[typing.List[GuildWelcomeScreenChannel]]
+    welcome_channels: typing.NotRequired[
+        collections.abc.Sequence[GuildWelcomeScreenChannel]
+    ]

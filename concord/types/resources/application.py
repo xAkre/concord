@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections.abc
 import enum
 import typing
 
@@ -27,7 +28,7 @@ class Application(typing.TypedDict):
     name: str
     icon: str | None
     description: str
-    rpc_origins: typing.NotRequired[typing.List[str]]
+    rpc_origins: typing.NotRequired[collections.abc.Sequence[str]]
     bot_public: bool
     bot_require_code_grant: bool
     bot: typing.NotRequired[User]
@@ -47,10 +48,10 @@ class Application(typing.TypedDict):
     flags: typing.NotRequired[int]
     approximate_guild_count: typing.NotRequired[int]
     approximate_user_install_count: typing.NotRequired[int]
-    redirect_uris: typing.NotRequired[typing.List[str]]
+    redirect_uris: typing.NotRequired[collections.abc.Sequence[str]]
     interactions_endpoint_url: typing.NotRequired[str | None]
     role_connections_verification_url: typing.NotRequired[str | None]
-    tags: typing.NotRequired[typing.List[str]]
+    tags: typing.NotRequired[collections.abc.Sequence[str]]
     install_params: typing.NotRequired[ApplicationInstallParams]
     integration_types_config: typing.NotRequired[
         typing.Mapping[
@@ -84,8 +85,8 @@ class ApplicationInstallParams(typing.TypedDict):
     for Discord's documentation.
     """
 
-    scopes: typing.List[OAuth2Scopes]
-    permissions: typing.List[typing.List[str]]
+    scopes: collections.abc.Sequence[OAuth2Scopes]
+    permissions: collections.abc.Sequence[collections.abc.Sequence[str]]
 
 
 class ApplicationIntegrationType(enum.StrEnum):

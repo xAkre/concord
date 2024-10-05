@@ -20,9 +20,9 @@ class ApplicationRoleConnectionMetadata(typing.TypedDict):
     type: ApplicationRoleConnectionMetadataType
     key: str
     name: str
-    name_localizations: typing.Optional[typing.Mapping[LanguageCode, str]]
+    name_localizations: typing.Mapping[LanguageCode, str] | None
     description: str
-    description_localizations: typing.Optional[typing.Mapping[LanguageCode, str]]
+    description_localizations: typing.Mapping[LanguageCode, str] | None
 
 
 class ApplicationRoleConnectionMetadataType(enum.IntEnum):
