@@ -5,7 +5,7 @@ import enum
 import typing
 
 from ..common import Snowflake
-from .user import User
+from .user import PartialUser
 
 __all__ = (
     "Team",
@@ -36,8 +36,7 @@ class TeamMember(typing.TypedDict):
 
     membership_state: TeamMembershipState
     team_id: Snowflake
-    user: User
-    """Partial user object."""
+    user: PartialUser
     role: TeamMemberRoleType
 
 

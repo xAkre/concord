@@ -5,9 +5,9 @@ import enum
 import typing
 
 from ..common import OAuth2Scopes, Snowflake
-from .guild import Guild
+from .guild import PartialGuild
 from .team import Team
-from .user import User
+from .user import PartialUser
 
 __all__ = (
     "Application",
@@ -31,17 +31,14 @@ class Application(typing.TypedDict):
     rpc_origins: typing.NotRequired[collections.abc.Sequence[str]]
     bot_public: bool
     bot_require_code_grant: bool
-    bot: typing.NotRequired[User]
-    """Partial user object."""
+    bot: typing.NotRequired[PartialUser]
     terms_of_service_url: typing.NotRequired[str]
     privacy_policy_url: typing.NotRequired[str]
-    owner: typing.NotRequired[User]
-    """Partial user object."""
+    owner: typing.NotRequired[PartialUser]
     verify_key: str
     team: Team | None
     guild_id: typing.NotRequired[Snowflake]
-    guild: typing.NotRequired[Guild]
-    """Partial guild object."""
+    guild: typing.NotRequired[PartialGuild]
     primary_sku_id: typing.NotRequired[Snowflake]
     slug: typing.NotRequired[str]
     cover_image: typing.NotRequired[str]
