@@ -5,7 +5,10 @@ import typing
 
 from ..common import LanguageCode
 
-__all__ = ("ApplicationRoleConnectionMetadata",)
+__all__ = (
+    "ApplicationRoleConnectionMetadata",
+    "ApplicationRoleConnectionMetadataType",
+)
 
 
 class ApplicationRoleConnectionMetadata(typing.TypedDict):
