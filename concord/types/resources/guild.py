@@ -10,6 +10,7 @@ from .role import Role
 from .sticker import Sticker
 
 __all__ = (
+    "PartialGuild",
     "Guild",
     "GuildFeature",
     "GuildVerificationLevel",
@@ -24,6 +25,63 @@ __all__ = (
 )
 
 
+class PartialGuild(typing.TypedDict):
+    """
+    Represents a partial guild object in Discord.
+
+    A partial guild is guaranteed to contain only an ID. While not explicitly
+    documented in the official docs, this assumption is recommended by users in
+    the Discord Developers server.
+
+    Other fields may be present but should not be relied upon in a partial guild object.
+    """
+
+    id: Snowflake
+    name: typing.NotRequired[str]
+    icon: typing.NotRequired[str | None]
+    icon_hash: typing.NotRequired[str]
+    splash: typing.NotRequired[str | None]
+    discovery_splash: typing.NotRequired[str | None]
+    owner: typing.NotRequired[bool]
+    owner_id: typing.NotRequired[Snowflake]
+    permissions: typing.NotRequired[str]
+    afk_channel_id: typing.NotRequired[Snowflake | None]
+    afk_timeout: typing.NotRequired[int]
+    widget_enabled: typing.NotRequired[bool]
+    widget_channel_id: typing.NotRequired[Snowflake | None]
+    verification_level: typing.NotRequired[GuildVerificationLevel]
+    default_message_notifications: typing.NotRequired[
+        GuildDefaultMessageNotificationLevel
+    ]
+    explicit_content_filter: typing.NotRequired[GuildExplicitContentFilterLevel]
+    roles: typing.NotRequired[collections.abc.Sequence[Role]]
+    emojis: typing.NotRequired[collections.abc.Sequence[Emoji]]
+    features: typing.NotRequired[collections.abc.Sequence[GuildFeature]]
+    mfa_level: typing.NotRequired[GuildMfaLevel]
+    application_id: typing.NotRequired[Snowflake | None]
+    system_channel_id: typing.NotRequired[Snowflake | None]
+    system_channel_flags: typing.NotRequired[int]
+    rules_channel_id: typing.NotRequired[Snowflake | None]
+    max_presences: typing.NotRequired[int | None]
+    max_members: typing.NotRequired[int]
+    vanity_url_code: typing.NotRequired[str | None]
+    description: typing.NotRequired[str | None]
+    banner: typing.NotRequired[str | None]
+    premium_tier: typing.NotRequired[GuildPremiumTier]
+    premium_subscription_count: typing.NotRequired[int]
+    preferred_locale: typing.NotRequired[LanguageCode]
+    public_updates_channel_id: typing.NotRequired[Snowflake | None]
+    max_video_channel_users: typing.NotRequired[int]
+    max_stage_video_channel_users: typing.NotRequired[int]
+    approximate_member_count: typing.NotRequired[int]
+    approximate_presence_count: typing.NotRequired[int]
+    welcome_screen: typing.NotRequired[GuildWelcomeScreen]
+    nsfw_level: typing.NotRequired[GuildNsfwLevel]
+    stickers: typing.NotRequired[collections.abc.Sequence[Sticker]]
+    premium_progress_bar_enabled: typing.NotRequired[bool]
+    safety_alerts_channel_id: typing.NotRequired[Snowflake | None]
+
+
 class Guild(typing.TypedDict):
     """
     See [here](https://discord.com/developers/docs/resources/guild)
@@ -33,16 +91,11 @@ class Guild(typing.TypedDict):
     id: Snowflake
     name: str
     icon: str | None
-    icon_hash: typing.NotRequired[str]
     splash: str | None
     discovery_splash: str | None
-    owner: typing.NotRequired[bool]
     owner_id: Snowflake
-    permissions: typing.NotRequired[str]
     afk_channel_id: Snowflake | None
     afk_timeout: int
-    widget_enabled: typing.NotRequired[bool]
-    widget_channel_id: typing.NotRequired[Snowflake | None]
     verification_level: GuildVerificationLevel
     default_message_notifications: GuildDefaultMessageNotificationLevel
     explicit_content_filter: GuildExplicitContentFilterLevel
@@ -54,22 +107,13 @@ class Guild(typing.TypedDict):
     system_channel_id: Snowflake | None
     system_channel_flags: int
     rules_channel_id: Snowflake | None
-    max_presences: typing.NotRequired[int | None]
-    max_members: typing.NotRequired[int]
     vanity_url_code: str | None
     description: str | None
     banner: str | None
     premium_tier: GuildPremiumTier
-    premium_subscription_count: typing.NotRequired[int]
     preferred_locale: LanguageCode
     public_updates_channel_id: Snowflake | None
-    max_video_channel_users: typing.NotRequired[int]
-    max_stage_video_channel_users: typing.NotRequired[int]
-    approximate_member_count: typing.NotRequired[int]
-    approximate_presence_count: typing.NotRequired[int]
-    welcome_screen: typing.NotRequired[GuildWelcomeScreen]
     nsfw_level: GuildNsfwLevel
-    stickers: typing.NotRequired[collections.abc.Sequence[Sticker]]
     premium_progress_bar_enabled: bool
     safety_alerts_channel_id: Snowflake | None
 

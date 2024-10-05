@@ -1,3 +1,6 @@
+# mypy: disable-error-code="misc"
+# This is needed because Mypy complains when overriding fields in a TypedDict.
+
 from __future__ import annotations
 
 import enum
@@ -6,6 +9,7 @@ import typing
 from ..common import Snowflake
 
 __all__ = (
+    "PartialUser",
     "User",
     "UserPremiumType",
     "UserFlags",
@@ -13,16 +17,21 @@ __all__ = (
 )
 
 
-class User(typing.TypedDict):
+class PartialUser(typing.TypedDict):
     """
-    See [here](https://discord.com/developers/docs/resources/user)
-    for Discord's documentation.
+    Represents a partial user object in Discord.
+
+    A partial user is guaranteed to contain only an ID. While not explicitly
+    documented in the official docs, this assumption is recommended by users in
+    the Discord Developers server.
+
+    Other fields may be present but should not be relied upon in a partial user object.
     """
 
     id: Snowflake
-    username: str
-    discriminator: str
-    avatar: str | None
+    username: typing.NotRequired[str]
+    discriminator: typing.NotRequired[str]
+    avatar: typing.NotRequired[str | None]
     bot: typing.NotRequired[bool]
     system: typing.NotRequired[bool]
     mfa_enabled: typing.NotRequired[bool]
@@ -35,6 +44,18 @@ class User(typing.TypedDict):
     premium_type: typing.NotRequired[UserPremiumType]
     public_flags: typing.NotRequired[int]
     avatar_decoration_data: typing.NotRequired[AvatarDecoration | None]
+
+
+class User(PartialUser):
+    """
+    See [here](https://discord.com/developers/docs/resources/user)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    username: str
+    discriminator: str
+    avatar: str | None
 
 
 class UserPremiumType(enum.IntEnum):
