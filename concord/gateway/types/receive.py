@@ -2,10 +2,14 @@ import typing
 
 from .common import GatewayEventPayload, GatewayReceiveOpcode
 
-__all__ = ("HelloPayloadData", "HelloPayload", "ReconnectPayload")
+__all__ = (
+    "GatewayHelloEventPayloadData",
+    "GatewayHelloEventPayload",
+    "GatewayReconnectEventPayload",
+)
 
 
-class HelloPayloadData(typing.TypedDict):
+class GatewayHelloEventPayloadData(typing.TypedDict):
     """
     See [here](https://discord.com/developers/docs/topics/gateway-events#hello)
     for Discord's documentation.
@@ -14,10 +18,10 @@ class HelloPayloadData(typing.TypedDict):
     heartbeat_interval: int
 
 
-HelloPayload = GatewayEventPayload[
-    typing.Literal[GatewayReceiveOpcode.HELLO], HelloPayloadData
+GatewayHelloEventPayload = GatewayEventPayload[
+    typing.Literal[GatewayReceiveOpcode.HELLO], GatewayHelloEventPayloadData
 ]
 
-ReconnectPayload = GatewayEventPayload[
+GatewayReconnectEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.RECONNECT], typing.Literal[None]
 ]
