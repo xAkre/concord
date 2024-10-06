@@ -1,3 +1,6 @@
+# mypy: disable-error-code="misc"
+# This is needed because Mypy complains when overriding fields in a TypedDict.
+
 from __future__ import annotations
 
 import collections.abc
@@ -29,6 +32,7 @@ __all__ = (
     "GuildNsfwLevel",
     "GuildWelcomeScreen",
     "GuildWelcomeScreenChannel",
+    "PartialGuildMember",
     "GuildMember",
     "GuildMemberFlags",
     "PartialGuildIntegration",
@@ -97,7 +101,7 @@ class PartialGuild(typing.TypedDict):
     safety_alerts_channel_id: typing.NotRequired[Snowflake | None]
 
 
-class Guild(typing.TypedDict):
+class Guild(PartialGuild):
     """
     See [here](https://discord.com/developers/docs/resources/guild)
     for Discord's documentation.
@@ -279,25 +283,44 @@ class GuildWelcomeScreen(typing.TypedDict):
     ]
 
 
+class PartialGuildMember(typing.TypedDict):
+    """
+    Represents a partial guild member object in Discord.
+
+    A partial guild member is guaranteed to contain only an ID. While not explicitly
+    documented in the official docs, this assumption is recommended by users in
+    the Discord Developers server.
+
+    Other fields may be present but should not be relied upon in a partial guild
+    member object.
+    """
+
+    user: typing.NotRequired[User]
+    nick: typing.NotRequired[str | None]
+    avatar: typing.NotRequired[str | None]
+    roles: typing.NotRequired[collections.abc.Sequence[Snowflake]]
+    joined_at: typing.NotRequired[Iso8601Timestamp]
+    premium_since: typing.NotRequired[Iso8601Timestamp | None]
+    deaf: typing.NotRequired[bool]
+    mute: typing.NotRequired[bool]
+    flags: typing.NotRequired[int]
+    pending: typing.NotRequired[bool]
+    permission: typing.NotRequired[UnparsedPermissionBitSet]
+    communication_disabled_until: typing.NotRequired[Iso8601Timestamp | None]
+    avatar_decoration_data: typing.NotRequired[AvatarDecoration | None]
+
+
 class GuildMember(typing.TypedDict):
     """
     See [here](https://discord.com/developers/docs/resources/guild#guild-member-object)
     for Discord's documentation.
     """
 
-    user: typing.NotRequired[User]
-    nick: typing.NotRequired[str | None]
-    avatar: typing.NotRequired[str | None]
     roles: collections.abc.Sequence[Snowflake]
     joined_at: Iso8601Timestamp
-    premium_since: typing.NotRequired[Iso8601Timestamp | None]
     deaf: bool
     mute: bool
     flags: int
-    pending: typing.NotRequired[bool]
-    permission: typing.NotRequired[UnparsedPermissionBitSet]
-    communication_disabled_until: typing.NotRequired[Iso8601Timestamp | None]
-    avatar_decoration_data: typing.NotRequired[AvatarDecoration | None]
 
 
 class GuildMemberFlags(enum.IntFlag):
