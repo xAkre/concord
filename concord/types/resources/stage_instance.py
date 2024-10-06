@@ -4,7 +4,6 @@ import enum
 import typing
 
 from ..common import Snowflake
-from .user import User
 
 __all__ = ("StageInstance", "StageInstancePrivacyLevel")
 
