@@ -1,3 +1,6 @@
+# mypy: disable-error-code="misc"
+# This is needed because Mypy complains when overriding fields in a TypedDict.
+
 from __future__ import annotations
 
 import collections.abc
@@ -10,6 +13,7 @@ from .team import Team
 from .user import PartialUser
 
 __all__ = (
+    "PartialApplication",
     "Application",
     "ApplicationFlags",
     "ApplicationInstallParams",
@@ -18,25 +22,31 @@ __all__ = (
 )
 
 
-class Application(typing.TypedDict):
+class PartialApplication(typing.TypedDict):
     """
-    See [here](https://discord.com/developers/docs/resources/application)
-    for Discord's documentation.
+    Represents a partial application object in Discord.
+
+    A partial application is guaranteed to contain only an ID. While not explicitly
+    documented in the official docs, this assumption is recommended by users in
+    the Discord Developers server.
+
+    Other fields may be present but should not be relied upon in a partial application
+    object.
     """
 
     id: Snowflake
-    name: str
-    icon: str | None
-    description: str
+    name: typing.NotRequired[str]
+    icon: typing.NotRequired[str | None]
+    description: typing.NotRequired[str]
     rpc_origins: typing.NotRequired[collections.abc.Sequence[str]]
-    bot_public: bool
-    bot_require_code_grant: bool
+    bot_public: typing.NotRequired[bool]
+    bot_require_code_grant: typing.NotRequired[bool]
     bot: typing.NotRequired[PartialUser]
     terms_of_service_url: typing.NotRequired[str]
     privacy_policy_url: typing.NotRequired[str]
     owner: typing.NotRequired[PartialUser]
-    verify_key: str
-    team: Team | None
+    verify_key: typing.NotRequired[str]
+    team: typing.NotRequired[Team | None]
     guild_id: typing.NotRequired[Snowflake]
     guild: typing.NotRequired[PartialGuild]
     primary_sku_id: typing.NotRequired[Snowflake]
@@ -56,6 +66,22 @@ class Application(typing.TypedDict):
         ]
     ]
     custom_install_url: typing.NotRequired[str]
+
+
+class Application(PartialApplication):
+    """
+    See [here](https://discord.com/developers/docs/resources/application)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    name: str
+    icon: str | None
+    description: str
+    bot_public: bool
+    bot_require_code_grant: bool
+    verify_key: str
+    team: Team | None
 
 
 class ApplicationFlags(enum.IntFlag):
