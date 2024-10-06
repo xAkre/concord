@@ -1,5 +1,4 @@
 import asyncio
-import enum
 import logging
 import typing
 
@@ -25,7 +24,7 @@ class GatewayMessageEmitter:
         :param logger: The logger to use. Defaults to the logger of this module.
         """
         self.queue: asyncio.PriorityQueue[typing.Any] = asyncio.PriorityQueue()
-        self.logger = logger
+        self._logger = logger
         self._send_loop_task: asyncio.Task | None = None
 
     async def emit(self, message: dict, priority: int = 0) -> None:
@@ -34,7 +33,7 @@ class GatewayMessageEmitter:
 
         :param message: The message to emit.
         """
-        self.logger.debug(f"Emitting message: {message}")
+        self._logger.debug(f"Emitting message: {message}")
         await self.queue.put((priority, message))
 
     async def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
@@ -59,5 +58,5 @@ class GatewayMessageEmitter:
         """
         while True:
             message = await self.queue.get()
-            self.logger.debug(f"Sending message: {message}")
+            self._logger.debug(f"Sending message: {message}")
             await ws.send_json(message)
