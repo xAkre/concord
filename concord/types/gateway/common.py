@@ -1,9 +1,11 @@
 import enum
+import typing
 
 __all__ = (
     "GatewayOpcode",
     "GatewaySendOpcode",
     "GatewayReceiveOpcode",
+    "GatewayEventPayload",
 )
 
 
@@ -54,3 +56,15 @@ class GatewayReceiveOpcode(enum.IntEnum):
     INVALID_SESSION = 9
     HELLO = 10
     HEARTBEAT_ACK = 11
+
+
+class GatewayEventPayload(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/topics/gateway-events#payload-structure)
+    for Discord's documentation.
+    """
+
+    op: GatewayOpcode
+    d: typing.Any
+    s: int | None
+    t: str | None
