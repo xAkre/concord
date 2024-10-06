@@ -5,7 +5,11 @@ import typing
 
 from ..common import Snowflake
 
-__all__ = ("Sku", "SkuType", "SkuFlags")
+__all__ = (
+    "Sku",
+    "SkuType",
+    "SkuFlags",
+)
 
 
 class Sku(typing.TypedDict):

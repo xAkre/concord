@@ -5,7 +5,10 @@ import typing
 
 from ..common import Iso8601Timestamp, Snowflake
 
-__all__ = ("Entitlement", "EntitlementType")
+__all__ = (
+    "Entitlement",
+    "EntitlementType",
+)
 
 
 class Entitlement(typing.TypedDict):

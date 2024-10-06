@@ -10,7 +10,11 @@ from .guild import PartialGuild
 from .guild_scheduled_event import GuildScheduledEvent
 from .user import User
 
-__all__ = ("Invite", "InviteType", "InviteTargetType")
+__all__ = (
+    "Invite",
+    "InviteType",
+    "InviteTargetType",
+)
 
 
 class Invite(typing.TypedDict):

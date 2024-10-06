@@ -5,7 +5,10 @@ import typing
 
 from ..common import Snowflake
 
-__all__ = ("StageInstance", "StageInstancePrivacyLevel")
+__all__ = (
+    "StageInstance",
+    "StageInstancePrivacyLevel",
+)
 
 
 class StageInstance(typing.TypedDict):

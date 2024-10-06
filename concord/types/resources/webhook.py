@@ -8,7 +8,10 @@ from .channel import PartialChannel
 from .guild import PartialGuild
 from .user import User
 
-__all__ = ("Webhook", "WebhookType")
+__all__ = (
+    "Webhook",
+    "WebhookType",
+)
 
 
 class Webhook(typing.TypedDict):

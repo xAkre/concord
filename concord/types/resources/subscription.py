@@ -6,7 +6,10 @@ import typing
 
 from ..common import Iso8601Timestamp, Snowflake
 
-__all__ = ("Subscription", "SubscriptionStatus")
+__all__ = (
+    "Subscription",
+    "SubscriptionStatus",
+)
 
 
 class Subscription(typing.TypedDict):

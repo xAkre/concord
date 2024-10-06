@@ -3,7 +3,10 @@ import typing
 from ..common import Snowflake
 from .guild import GuildMember
 
-__all__ = ("VoiceState", "VoiceRegion")
+__all__ = (
+    "VoiceState",
+    "VoiceRegion",
+)
 
 
 class VoiceState(typing.TypedDict):
