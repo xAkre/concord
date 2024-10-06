@@ -3,6 +3,8 @@ import typing
 
 __all__ = (
     "Snowflake",
+    "Iso8601Timestamp",
+    "UnparsedPermissionBitSet",
     "LanguageCode",
     "LanguageDisplayName",
     "OAuth2Scopes",
@@ -11,6 +13,8 @@ __all__ = (
 
 
 Snowflake: typing.TypeAlias = str
+Iso8601Timestamp: typing.TypeAlias = str
+UnparsedPermissionBitSet: typing.TypeAlias = str
 
 
 class LanguageCode(enum.StrEnum):

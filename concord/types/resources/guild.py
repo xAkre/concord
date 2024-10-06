@@ -4,10 +4,11 @@ import collections.abc
 import enum
 import typing
 
-from ..common import LanguageCode, Snowflake
+from ..common import Iso8601Timestamp, LanguageCode, Snowflake, UnparsedPermissionBitSet
 from .emoji import Emoji
 from .role import Role
 from .sticker import Sticker
+from .user import AvatarDecoration, User
 
 __all__ = (
     "PartialGuild",
@@ -22,6 +23,8 @@ __all__ = (
     "GuildNsfwLevel",
     "GuildWelcomeScreen",
     "GuildWelcomeScreenChannel",
+    "GuildMember",
+    "GuildMemberFlags",
 )
 
 
@@ -262,3 +265,41 @@ class GuildWelcomeScreen(typing.TypedDict):
     welcome_channels: typing.NotRequired[
         collections.abc.Sequence[GuildWelcomeScreenChannel]
     ]
+
+
+class GuildMember(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#guild-member-object)
+    for Discord's documentation.
+    """
+
+    user: typing.NotRequired[User]
+    nick: typing.NotRequired[str | None]
+    avatar: typing.NotRequired[str | None]
+    roles: collections.abc.Sequence[Snowflake]
+    joined_at: Iso8601Timestamp
+    premium_since: typing.NotRequired[Iso8601Timestamp | None]
+    deaf: bool
+    mute: bool
+    flags: int
+    pending: typing.NotRequired[bool]
+    permission: typing.NotRequired[UnparsedPermissionBitSet]
+    communication_disabled_until: typing.NotRequired[Iso8601Timestamp | None]
+    avatar_decoration_data: typing.NotRequired[AvatarDecoration | None]
+
+
+class GuildMemberFlags(enum.IntFlag):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags)
+    for Discord's documentation.
+    """
+
+    DID_REJOIN = 1 << 0
+    COMPLETED_ONBOARDING = 1 << 1
+    BYPASSES_VERIFICATION = 1 << 2
+    STARTED_ONBOARDING = 1 << 3
+    IS_GUEST = 1 << 4
+    STARTED_HOME_ACTIONS = 1 << 5
+    COMPLETED_HOME_ACTIONS = 1 << 6
+    AUTOMOD_QUARANTINED_USERNAME = 1 << 7
+    DM_SETTINGS_UPSELL_ACKNOWLEDGED = 1 << 8
