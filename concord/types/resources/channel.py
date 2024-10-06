@@ -7,8 +7,6 @@ import collections.abc
 import enum
 import typing
 
-from concord.types.resources.guild import GuildMember
-
 from ..common import Iso8601Timestamp, Snowflake, UnparsedPermissionBitSet
 from .guild import GuildMember
 from .user import User
@@ -17,8 +15,8 @@ __all__ = (
     "PartialChannel",
     "Channel",
     "ChannelType",
-    "Overwrite",
-    "OverwriteType",
+    "PermissionOverwrite",
+    "PermissionOverwriteType",
     "ThreadMetadata",
     "ThreadMember",
     "ChannelFlags",
@@ -44,7 +42,9 @@ class PartialChannel(typing.TypedDict):
     type: typing.NotRequired[ChannelType]
     guild_id: typing.NotRequired[Snowflake]
     position: typing.NotRequired[int]
-    permission_overwrites: typing.NotRequired[collections.abc.Sequence[Overwrite]]
+    permission_overwrites: typing.NotRequired[
+        collections.abc.Sequence[PermissionOverwrite]
+    ]
     name: typing.NotRequired[str | None]
     topic: typing.NotRequired[str | None]
     nsfw: typing.NotRequired[bool]
@@ -96,19 +96,19 @@ class ChannelType(enum.IntEnum):
     MEMBER = 1
 
 
-class Overwrite(typing.TypedDict):
+class PermissionOverwrite(typing.TypedDict):
     """
     See [here](https://discord.com/developers/docs/resources/channel#overwrite-object)
     for Discord's documentation.
     """
 
     id: Snowflake
-    type: int
+    type: PermissionOverwriteType
     allow: UnparsedPermissionBitSet
     deny: UnparsedPermissionBitSet
 
 
-class OverwriteType(enum.IntEnum):
+class PermissionOverwriteType(enum.IntEnum):
     """
     See [here](https://discord.com/developers/docs/resources/channel#overwrite-object-overwrite-types)
     for Discord's documentation.
