@@ -58,13 +58,13 @@ class GatewayReceiveOpcode(enum.IntEnum):
     HEARTBEAT_ACK = 11
 
 
-class GatewayEventPayload(typing.TypedDict):
+class GatewayEventPayload[Op: GatewayReceiveOpcode, Data](typing.TypedDict):
     """
     See [here](https://discord.com/developers/docs/topics/gateway-events#payload-structure)
     for Discord's documentation.
     """
 
-    op: GatewayOpcode
-    d: typing.Any
+    op: Op
+    d: Data
     s: int | None
     t: str | None
