@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 import typing
 
-from ..common import Snowflake
+from ..common import Snowflake, UnparsedPermissionBitSet
 
 __all__ = (
     "Role",
@@ -25,7 +25,7 @@ class Role(typing.TypedDict):
     icon: typing.NotRequired[str | None]
     unicode_emoji: typing.NotRequired[str | None]
     position: int
-    permissions: int
+    permissions: UnparsedPermissionBitSet
     managed: bool
     mentionable: bool
     tags: typing.NotRequired[RoleTags]
