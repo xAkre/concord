@@ -13,6 +13,14 @@ from .guild_scheduled_event import GuildScheduledEvent
 from .user import User
 from .webhook import Webhook
 
+__all__ = (
+    "AuditLog",
+    "AuditLogChange",
+    "AuditLogEntry",
+    "AuditLogEvent",
+    "AuditLogEntryInfo",
+)
+
 
 class AuditLog(typing.TypedDict):
     """
