@@ -9,6 +9,7 @@ __all__ = (
     "LanguageDisplayName",
     "OAuth2Scopes",
     "Permissions",
+    "DiscordApiVersion",
 )
 
 
@@ -190,3 +191,15 @@ class Permissions(enum.IntFlag):
     SEND_VOICE_MESSAGES = 1 << 46
     SEND_POLLS = 1 << 49
     USE_EXTERNAL_APPS = 1 << 50
+
+
+class DiscordApiVersion(enum.IntEnum):
+    """
+    See [here](https://discord.com/developers/docs/reference#api-versioning) for Discord's
+    documentation.
+
+    Only version 10 is supported at the moment.
+    """
+
+    V10 = 10
+    DEFAULT = 10
