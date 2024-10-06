@@ -13,27 +13,22 @@ class GatewayMessageEmitter:
     This class is responsible for emitting messages to the gateway.
 
     It uses a priority queue to ensure that messages can be prioritized.
-
-    :ivar session: The aiohttp.ClientSession instance.
-    :ivar queue: The priority queue.
     """
 
     def __init__(
         self,
-        session: aiohttp.ClientSession,
         logger: logging.Logger = logging.getLogger(__name__),
-    ):
+    ) -> None:
         """
-        Initialize the emitter with the given session.
+        Initialize the emitter.
 
-        :param session: The aiohttp.ClientSession instance.
         :param logger: The logger to use. Defaults to the logger of this module.
         """
-        self.session = session
         self.queue: asyncio.PriorityQueue[typing.Any] = asyncio.PriorityQueue()
         self.logger = logger
+        self._send_loop_task: asyncio.Task | None = None
 
-    async def emit(self, message: dict, priority: int = 0):
+    async def emit(self, message: dict, priority: int = 0) -> None:
         """
         Emit a message to the gateway.
 
@@ -42,9 +37,27 @@ class GatewayMessageEmitter:
         self.logger.debug(f"Emitting message: {message}")
         await self.queue.put((priority, message))
 
-    async def start(self):
-        """Start the emitter."""
+    async def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
+        """
+        Start the emitter with the given websocket.
+
+        :param ws: The websocket to emit messages to.
+        """
+        self._send_loop_task = asyncio.create_task(self._send_loop(ws))
+
+    async def stop(self) -> None:
+        """Stop the emitter."""
+        if self._send_loop_task:
+            self._send_loop_task.cancel()
+            await self._send_loop_task
+
+    async def _send_loop(self, ws: aiohttp.ClientWebSocketResponse) -> None:
+        """
+        Send messages to the websocket until cancelled.
+
+        :param ws: The websocket to send messages to.
+        """
         while True:
             message = await self.queue.get()
             self.logger.debug(f"Sending message: {message}")
-            await self.session.send_json(message)
+            await ws.send_json(message)
