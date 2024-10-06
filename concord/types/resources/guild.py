@@ -31,6 +31,12 @@ __all__ = (
     "GuildWelcomeScreenChannel",
     "GuildMember",
     "GuildMemberFlags",
+    "PartialGuildIntegration",
+    "GuildIntegration",
+    "GuildIntegrationType",
+    "GuildIntegrationExpireBehavior",
+    "GuildIntegrationAccount",
+    "GuildIntegrationApplication",
 )
 
 
@@ -311,16 +317,22 @@ class GuildMemberFlags(enum.IntFlag):
     DM_SETTINGS_UPSELL_ACKNOWLEDGED = 1 << 8
 
 
-class GuildIntegration(typing.TypedDict):
+class PartialGuildIntegration(typing.TypedDict):
     """
-    See [here](https://discord.com/developers/docs/resources/guild#integration-object)
-    for Discord's documentation.
+    Represents a partial guild integration object in Discord.
+
+    A partial guild integration is guaranteed to contain only an ID. While not explicitly
+    documented in the official docs, this assumption is recommended by users in
+    the Discord Developers server.
+
+    Other fields may be present but should not be relied upon in a partial guild
+    integration object.
     """
 
     id: Snowflake
-    name: str
-    type: GuildIntegrationType
-    enabled: bool
+    name: typing.NotRequired[str]
+    type: typing.NotRequired[GuildIntegrationType]
+    enabled: typing.NotRequired[bool]
     syncing: typing.NotRequired[bool]
     role_id: typing.NotRequired[Snowflake]
     enable_emoticons: typing.NotRequired[bool]
@@ -333,6 +345,18 @@ class GuildIntegration(typing.TypedDict):
     revoked: typing.NotRequired[bool]
     application: typing.NotRequired[GuildIntegrationApplication]
     scopes: typing.NotRequired[collections.abc.Sequence[OAuth2Scopes]]
+
+
+class GuildIntegration(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-object)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    name: str
+    type: GuildIntegrationType
+    enabled: bool
 
 
 class GuildIntegrationType(enum.StrEnum):
