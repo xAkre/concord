@@ -2,6 +2,7 @@ import asyncio
 import typing
 
 from .types.common import GatewayEventPayload, GatewayReceiveOpcode
+from .types.receive import GatewayHelloEventPayload, GatewayReconnectEventPayload
 
 __all__ = ("GatewayEventDispatcher",)
 
@@ -18,6 +19,20 @@ class GatewayEventDispatcher:
         self.handlers: typing.Dict[
             GatewayReceiveOpcode, typing.List[typing.Callable]
         ] = {}
+
+    @typing.overload
+    def register_handler(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HELLO],
+        handler: typing.Callable[[GatewayHelloEventPayload], None],
+    ) -> None: ...
+
+    @typing.overload
+    def register_handler(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.RECONNECT],
+        handler: typing.Callable[[GatewayReconnectEventPayload], None],
+    ) -> None: ...
 
     def register_handler(
         self, opcode: GatewayReceiveOpcode, handler: typing.Callable
