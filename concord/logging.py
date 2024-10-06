@@ -3,6 +3,8 @@ import typing
 
 from concord.sentinel import Sentinel
 
+__all__ = ("setup_logger",)
+
 
 def setup_logger(
     log_level: int = logging.INFO,
@@ -30,6 +32,3 @@ def setup_logger(
     logger = logging.getLogger("concord")
     logger.setLevel(log_level)
     logger.addHandler(handler)
-
-
-__all__ = ["setup_logger"]

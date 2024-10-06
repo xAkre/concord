@@ -1,5 +1,5 @@
+__all__ = ("ConcordException",)
+
+
 class ConcordException(Exception):
-    pass
-
-
-__all__ = ["ConcordException"]
+    """Base class for Concord exceptions."""
