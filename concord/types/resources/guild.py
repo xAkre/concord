@@ -4,7 +4,13 @@ import collections.abc
 import enum
 import typing
 
-from ..common import Iso8601Timestamp, LanguageCode, Snowflake, UnparsedPermissionBitSet
+from ..common import (
+    Iso8601Timestamp,
+    LanguageCode,
+    OAuth2Scopes,
+    Snowflake,
+    UnparsedPermissionBitSet,
+)
 from .emoji import Emoji
 from .role import Role
 from .sticker import Sticker
@@ -303,3 +309,72 @@ class GuildMemberFlags(enum.IntFlag):
     COMPLETED_HOME_ACTIONS = 1 << 6
     AUTOMOD_QUARANTINED_USERNAME = 1 << 7
     DM_SETTINGS_UPSELL_ACKNOWLEDGED = 1 << 8
+
+
+class GuildIntegration(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-object)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    name: str
+    type: GuildIntegrationType
+    enabled: bool
+    syncing: typing.NotRequired[bool]
+    role_id: typing.NotRequired[Snowflake]
+    enable_emoticons: typing.NotRequired[bool]
+    expire_behavior: typing.NotRequired[GuildIntegrationExpireBehavior]
+    expire_grace_period: typing.NotRequired[int]
+    user: typing.NotRequired[User]
+    account: typing.NotRequired[GuildIntegrationAccount]
+    synced_at: typing.NotRequired[Iso8601Timestamp]
+    subscriber_count: typing.NotRequired[int]
+    revoked: typing.NotRequired[bool]
+    application: typing.NotRequired[GuildIntegrationApplication]
+    scopes: typing.NotRequired[collections.abc.Sequence[OAuth2Scopes]]
+
+
+class GuildIntegrationType(enum.StrEnum):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-object)
+    for Discord's documentation.
+    """
+
+    TWITCH = "twitch"
+    YOUTUBE = "youtube"
+    DISCORD = "discord"
+    GUILD_SUBSCRIPTION = "guild_subscription"
+
+
+class GuildIntegrationExpireBehavior(enum.IntEnum):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-object-integration-expire-behaviors)
+    for Discord's documentation.
+    """
+
+    REMOVE_ROLE = 0
+    KICK = 1
+
+
+class GuildIntegrationAccount(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-account-object)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    name: str
+
+
+class GuildIntegrationApplication(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#integration-application-object)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    name: str
+    icon: str | None
+    description: str
+    bot: typing.NotRequired[User]
