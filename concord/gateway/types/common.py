@@ -10,6 +10,15 @@ from concord.types.resources.emoji import Emoji
 __all__ = (
     "GatewayOpcode",
     "GatewayIntents",
+    "GatewayPresenceUpdate",
+    "GatewayActivity",
+    "GatewayActivityType",
+    "GatewayActivityTimestamps",
+    "GatewayActivityParty",
+    "GatewayActivityAssets",
+    "GatewayActivitySecrets",
+    "GatewayActivityFlags",
+    "GatewayActivityButton",
 )
 
 
