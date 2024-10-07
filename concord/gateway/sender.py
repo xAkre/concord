@@ -4,6 +4,8 @@ import typing
 
 import aiohttp
 
+from .types.send import GatewayMessage
+
 __all__ = ("GatewayMessageSender",)
 
 
@@ -23,11 +25,15 @@ class GatewayMessageSender:
 
         :param logger: The logger to use. Defaults to the logger of this module.
         """
-        self.queue: asyncio.PriorityQueue[typing.Any] = asyncio.PriorityQueue()
+        self.queue: asyncio.PriorityQueue[
+            typing.Tuple[int, GatewayMessage[typing.Any]]
+        ] = asyncio.PriorityQueue()
         self._logger = logger
         self._send_loop_task: asyncio.Task[None] | None = None
 
-    async def send(self, message: typing.Any, priority: int = 0) -> None:
+    async def send(
+        self, message: GatewayMessage[typing.Any], priority: int = 0
+    ) -> None:
         """
         Send a message to the gateway.
 
