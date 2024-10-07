@@ -70,6 +70,6 @@ class GatewayMessageSender:
         :param ws: The websocket to send messages to.
         """
         while True:
-            message = await self.queue.get()
+            (_, message) = await self.queue.get()
             self._logger.debug(f"Sending message: {message}")
-            await ws.send_json(message)
+            await ws.send_json(message.serialize())
