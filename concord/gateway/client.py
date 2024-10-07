@@ -5,10 +5,10 @@ import aiohttp
 from concord.types.common import DiscordApiVersion
 
 from .dispatcher import GatewayEventDispatcher
-from .emitter import GatewayMessageEmitter
 from .errors import GatewayConnectionException, GatewayException
 from .intents import Intents
 from .receiver import GatewayMessageReceiver
+from .sender import GatewayMessageSender
 from .types.receive import GatewayHelloEventPayload, GatewayReceiveOpcode
 
 __all__ = ("GatewayClient",)
@@ -35,7 +35,7 @@ class GatewayClient:
         self.api_version = api_version
         self._dispatcher = GatewayEventDispatcher()
         self._receiver = GatewayMessageReceiver()
-        self._emitter = GatewayMessageEmitter()
+        self._emitter = GatewayMessageSender()
         self._session: aiohttp.ClientSession | None = None
         self._ws: aiohttp.ClientWebSocketResponse | None = None
         self._receiver_task: asyncio.Task | None = None
