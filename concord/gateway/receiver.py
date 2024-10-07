@@ -26,7 +26,7 @@ class GatewayMessageReceiver:
         self._logger = logger
         self._receive_loop_task: asyncio.Task[None] | None = None
 
-    async def start(
+    def start(
         self, ws: aiohttp.ClientWebSocketResponse, dispatcher: GatewayEventDispatcher
     ) -> None:
         """

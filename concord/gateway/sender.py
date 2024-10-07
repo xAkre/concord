@@ -42,7 +42,7 @@ class GatewayMessageSender:
         self._logger.debug(f"Sending message: {message}")
         await self.queue.put((priority, message))
 
-    async def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
+    def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
         """
         Start the sender with the given websocket.
 
