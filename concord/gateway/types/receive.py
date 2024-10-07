@@ -1,3 +1,6 @@
+# mypy: disable-error-code="misc"
+# This is needed because Mypy complains when overriding fields in a TypedDict.
+
 import enum
 import typing
 
@@ -9,6 +12,7 @@ __all__ = (
     "GatewayHeartbeatEventPayload",
     "GatewayHeartbeatAcknowledgeEventPayload",
     "GatewayReconnectEventPayload",
+    "GatewayDispatchEventPayload",
 )
 
 
@@ -50,15 +54,43 @@ class GatewayHelloEventPayloadData(typing.TypedDict):
 GatewayHelloEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.HELLO], GatewayHelloEventPayloadData
 ]
+"""
+See [here](https://discord.com/developers/docs/topics/gateway-events#hello)
+for Discord's documentation.
+"""
 
 GatewayHeartbeatEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.HEARTBEAT], typing.Literal[None]
 ]
+"""
+See [here](https://discord.com/developers/docs/topics/gateway#connection-lifecycle)
+for Discord's documentation.
+"""
 
 GatewayHeartbeatAcknowledgeEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.HEARTBEAT_ACK], typing.Literal[None]
 ]
+"""
+See [here](https://discord.com/developers/docs/topics/gateway#connection-lifecycle)
+for Discord's documentation.
+"""
 
 GatewayReconnectEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.RECONNECT], typing.Literal[None]
 ]
+"""
+See [here](https://discord.com/developers/docs/topics/gateway-events#reconnect)
+for Discord's documentation.
+"""
+
+
+class GatewayDispatchEventPayload[T](
+    GatewayEventPayload[typing.Literal[GatewayReceiveOpcode.DISPATCH], T]
+):
+    """
+    See [here](https://discord.com/developers/docs/topics/gateway#dispatch-events)
+    for Discord's documentation.
+    """
+
+    s: int
+    t: str
