@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import typing
 
 import aiohttp
 
@@ -24,7 +25,7 @@ class GatewayMessageReceiver:
         :param logger: The logger to use. Defaults to the logger of this module.
         """
         self._logger = logger
-        self._receive_loop_task: asyncio.Task | None = None
+        self._receive_loop_task: asyncio.Task[None] | None = None
 
     async def start(
         self, ws: aiohttp.ClientWebSocketResponse, dispatcher: GatewayEventDispatcher
@@ -41,9 +42,16 @@ class GatewayMessageReceiver:
 
     async def stop(self) -> None:
         """Stop the receiver."""
+        self._logger.debug("Stopping receiver")
+
         if self._receive_loop_task:
             self._receive_loop_task.cancel()
-            await self._receive_loop_task
+
+            try:
+                await self._receive_loop_task
+            except asyncio.CancelledError:
+                self._logger.debug("Receiver stopped")
+                raise
 
     async def _receive_loop(
         self, ws: aiohttp.ClientWebSocketResponse, dispatcher: GatewayEventDispatcher
@@ -59,4 +67,4 @@ class GatewayMessageReceiver:
             message = await ws.receive()
             self._logger.debug(f"Received message: {message}")
             json = message.json()
-            await dispatcher.dispatch(json["op"], json)
+            await dispatcher.dispatch(json)

@@ -25,9 +25,9 @@ class GatewayMessageSender:
         """
         self.queue: asyncio.PriorityQueue[typing.Any] = asyncio.PriorityQueue()
         self._logger = logger
-        self._send_loop_task: asyncio.Task | None = None
+        self._send_loop_task: asyncio.Task[None] | None = None
 
-    async def send(self, message: dict, priority: int = 0) -> None:
+    async def send(self, message: typing.Any, priority: int = 0) -> None:
         """
         Send a message to the gateway.
 

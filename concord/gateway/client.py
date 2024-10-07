@@ -24,7 +24,7 @@ class GatewayClient:
         self,
         intents: Intents,
         api_version: DiscordApiVersion = DiscordApiVersion.DEFAULT,
-    ):
+    ) -> None:
         """
         Initialize the gateway client.
 
@@ -38,17 +38,17 @@ class GatewayClient:
         self._emitter = GatewayMessageSender()
         self._session: aiohttp.ClientSession | None = None
         self._ws: aiohttp.ClientWebSocketResponse | None = None
-        self._receiver_task: asyncio.Task | None = None
-        self._emitter_task: asyncio.Task | None = None
+        self._receiver_task: asyncio.Task[None] | None = None
+        self._emitter_task: asyncio.Task[None] | None = None
 
-    async def start(self):
+    async def start(self) -> None:
         """Start the gateway client."""
         await self._establish_connection()
         await self._setup_receiver()
         await self._setup_emitter()
         await self._register_handlers()
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the gateway client."""
         await self._receiver.stop()
         await self._emitter.stop()
@@ -67,7 +67,7 @@ class GatewayClient:
         if self._session:
             await self._session.close()
 
-    async def _establish_connection(self):
+    async def _establish_connection(self) -> None:
         """Establish a connection to the gateway."""
         self._session = aiohttp.ClientSession()
 
@@ -76,7 +76,7 @@ class GatewayClient:
         except aiohttp.WSServerHandshakeError as e:
             raise GatewayConnectionException("Failed to connect to the gateway.") from e
 
-    async def _setup_receiver(self):
+    async def _setup_receiver(self) -> None:
         """Setup the receiver."""
         if self._ws is None:
             raise GatewayException("WebSocket is not established.")
@@ -85,20 +85,20 @@ class GatewayClient:
             self._receiver.start(self._ws, self._dispatcher)
         )
 
-    async def _setup_emitter(self):
+    async def _setup_emitter(self) -> None:
         """Setup the emitter."""
         if self._ws is None:
             raise GatewayException("WebSocket is not established.")
 
         self._emitter_task = asyncio.create_task(self._emitter.start(self._ws))
 
-    async def _register_handlers(self):
+    async def _register_handlers(self) -> None:
         """Register the required handlers for the client to function."""
         self._dispatcher.register_handler(
             GatewayReceiveOpcode.HELLO, self._handle_hello
         )
 
-    async def _handle_hello(self, _: GatewayHelloEventPayload):
+    async def _handle_hello(self, _: GatewayHelloEventPayload) -> None:
         """Handle the hello event."""
         pass
 

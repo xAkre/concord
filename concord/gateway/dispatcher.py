@@ -21,25 +21,38 @@ class GatewayEventDispatcher:
     def __init__(self) -> None:
         """Initialize the dispatcher."""
         self.handlers: typing.Dict[
-            GatewayReceiveOpcode, typing.List[typing.Callable]
+            GatewayReceiveOpcode,
+            typing.List[
+                typing.Callable[
+                    [GatewayEventPayload[GatewayReceiveOpcode, typing.Any]],
+                    typing.Awaitable[None],
+                ]
+            ],
         ] = {}
 
     @typing.overload
     def register_handler(
         self,
         opcode: typing.Literal[GatewayReceiveOpcode.HELLO],
-        handler: typing.Callable[[GatewayHelloEventPayload], None],
+        handler: typing.Callable[[GatewayHelloEventPayload], typing.Awaitable[None]],
     ) -> None: ...
 
     @typing.overload
     def register_handler(
         self,
         opcode: typing.Literal[GatewayReceiveOpcode.RECONNECT],
-        handler: typing.Callable[[GatewayReconnectEventPayload], None],
+        handler: typing.Callable[
+            [GatewayReconnectEventPayload], typing.Awaitable[None]
+        ],
     ) -> None: ...
 
     def register_handler(
-        self, opcode: GatewayReceiveOpcode, handler: typing.Callable
+        self,
+        opcode: GatewayReceiveOpcode,
+        handler: typing.Callable[
+            [GatewayEventPayload[typing.Any, typing.Any]],
+            typing.Awaitable[None],
+        ],
     ) -> None:
         """
         Register a handler for an event.
@@ -53,14 +66,18 @@ class GatewayEventDispatcher:
         self.handlers[opcode].append(handler)
 
     async def dispatch(
-        self, opcode: GatewayReceiveOpcode, payload: GatewayEventPayload
+        self, payload: GatewayEventPayload[GatewayReceiveOpcode, typing.Any]
     ) -> None:
         """
         Dispatch an event to all registered handlers.
 
-        :param opcode: The opcode of the event to dispatch.
         :param payload: The payload of the event to dispatch.
         """
+        opcode = payload["op"]
+
+        if not opcode in GatewayReceiveOpcode:
+            return
+
         if opcode in self.handlers:
             for handler in self.handlers[opcode]:
                 if asyncio.iscoroutinefunction(handler):

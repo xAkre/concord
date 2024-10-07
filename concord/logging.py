@@ -11,7 +11,7 @@ def setup_logger(
     handler: (
         logging.Handler | None | typing.Literal[Sentinel.NOT_GIVEN]
     ) = Sentinel.NOT_GIVEN,
-):
+) -> None:
     """
     Setup the logger for concord.
 
