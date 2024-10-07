@@ -7,7 +7,10 @@ import typing
 from ..common import Snowflake
 from .user import PartialUser
 
-__all__ = ("PartialEmoji", "Emoji")
+__all__ = (
+    "PartialEmoji",
+    "Emoji",
+)
 
 
 class PartialEmoji(typing.TypedDict):
