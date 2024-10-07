@@ -10,6 +10,7 @@ from .common import GatewayPresenceUpdate
 __all__ = (
     "GatewaySendOpcode",
     "GatewayMessage",
+    "GatewayHeartbeatMessage",
     "GatewayIdentifyMessageData",
     "GatewayIdentifyMessageConnectionProperties",
     "GatewayIdentifyMessage",
@@ -51,6 +52,17 @@ class GatewayMessage[T]:
                 "d": self.data,
             }
         )
+
+
+class GatewayHeartbeatMessage(GatewayMessage[int | None]):
+    """
+    Represents a heartbeat message to be sent to the gateway.
+
+    See [here](https://discord.com/developers/docs/topics/gateway-events#heartbeat)
+    for Discord's documentation.
+    """
+
+    opcode: typing.Literal[GatewaySendOpcode.HEARTBEAT] = GatewaySendOpcode.HEARTBEAT
 
 
 class GatewayIdentifyMessageData(typing.TypedDict):
