@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import typing
 
 from .types.receive import (
@@ -21,8 +22,12 @@ class GatewayEventDispatcher:
     :ivar handlers: A dictionary mapping opcodes to lists of handlers.
     """
 
-    def __init__(self) -> None:
-        """Initialize the dispatcher."""
+    def __init__(self, logger: logging.Logger = logging.getLogger(__name__)) -> None:
+        """
+        Initialize the dispatcher.
+
+        :param logger: The logger to use. Defaults to the logger of this module.
+        """
         self.handlers: typing.Dict[
             GatewayReceiveOpcode,
             typing.List[
@@ -32,6 +37,7 @@ class GatewayEventDispatcher:
                 ]
             ],
         ] = {}
+        self._logger = logger
 
     @typing.overload
     def register_handler(
@@ -108,6 +114,8 @@ class GatewayEventDispatcher:
 
         if opcode in self.handlers:
             for handler in self.handlers[opcode]:
+                self._logger.debug(f"Dispatching event {opcode} to handler {handler}")
+
                 if asyncio.iscoroutinefunction(handler):
                     await handler(payload)
                 else:

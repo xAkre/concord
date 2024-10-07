@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 import aiohttp
 
@@ -25,15 +26,18 @@ class GatewayClient:
         self,
         intents: Intents,
         api_version: DiscordApiVersion = DiscordApiVersion.DEFAULT,
+        logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
         """
         Initialize the gateway client.
 
         :param intents: The intents to request.
         :param api_version: The API version to use.
+        :param logger: The logger to use. Defaults to the logger of this module.
         """
         self.intents = intents
         self.api_version = api_version
+        self._logger = logger
         self._dispatcher = GatewayEventDispatcher()
         self._receiver = GatewayMessageReceiver()
         self._sender = GatewayMessageSender()
@@ -43,24 +47,42 @@ class GatewayClient:
 
     async def start(self) -> None:
         """Start the gateway client."""
+        self._logger.info("Starting gateway client")
         await self._establish_connection()
         self._setup_receiver()
         self._setup_sender()
         self._register_handlers()
 
+        if self._receiver._receive_loop_task and self._sender._send_loop_task:
+            self._logger.info("Gateway client started")
+            await asyncio.gather(
+                self._receiver._receive_loop_task,
+                self._sender._send_loop_task,
+            )
+
     async def close(self) -> None:
         """Close the gateway client."""
+        self._logger.debug("Closing gateway client")
         await self._receiver.stop()
+        self._logger.debug("Receiver stopped")
         await self._sender.stop()
+        self._logger.debug("Sender stopped")
+
+        if self._heartbeat_handler:
+            await self._heartbeat_handler.stop()
+            self._logger.debug("Heartbeat handler stopped")
 
         if self._ws:
             await self._ws.close()
+            self._logger.debug("WebSocket closed")
 
         if self._session:
             await self._session.close()
+            self._logger.debug("Session closed")
 
     async def _establish_connection(self) -> None:
         """Establish a connection to the gateway."""
+        self._logger.debug("Establishing connection to the gateway")
         self._session = aiohttp.ClientSession()
 
         try:
@@ -70,6 +92,8 @@ class GatewayClient:
 
     def _setup_receiver(self) -> None:
         """Setup the receiver."""
+        self._logger.debug("Setting up receiver")
+
         if self._ws is None:
             raise GatewayException("WebSocket is not established.")
 
@@ -77,6 +101,8 @@ class GatewayClient:
 
     def _setup_sender(self) -> None:
         """Setup the sender."""
+        self._logger.debug("Setting up sender")
+
         if self._ws is None:
             raise GatewayException("WebSocket is not established.")
 
@@ -84,16 +110,18 @@ class GatewayClient:
 
     def _register_handlers(self) -> None:
         """Register the required handlers for the client to function."""
+        self._logger.debug("Registering handlers")
         self._dispatcher.register_handler(
             GatewayReceiveOpcode.HELLO, self._handle_hello
         )
 
     async def _handle_hello(self, payload: GatewayHelloEventPayload) -> None:
         """Handle the hello event."""
+        self._logger.debug("Starting heartbeat handler")
         self._heartbeat_handler.start(
             payload["d"]["heartbeat_interval"], self._dispatcher, self._sender
         )
 
     def _get_ws_url(self) -> str:
         """Get the WebSocket URL for the gateway."""
-        return f"wss://gateway.discord.gg/?v={self.api_version}&encoding=json"
+        return f"wss://gateway.discord.gg/?v={self.api_version}&enc=json"

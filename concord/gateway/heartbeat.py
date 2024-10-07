@@ -3,6 +3,7 @@ import logging
 import typing
 
 from .dispatcher import GatewayEventDispatcher
+from .errors import GatewayException
 from .sender import GatewayMessageSender
 from .types.receive import (
     GatewayDispatchEventPayload,
@@ -46,7 +47,9 @@ class HeartbeatHandler:
                            required for the handler to work.
         :param sender: The sender to use to send heartbeat messages.
         """
-        self._heartbeat_interval_ms = interval_ms / 1000
+        self._logger.debug("Starting heartbeat handler")
+
+        self._heartbeat_interval_ms = interval_ms
         self._dispatcher = dispatcher
         self._sender = sender
 
@@ -67,40 +70,45 @@ class HeartbeatHandler:
 
     def _register_handlers(self) -> None:
         """Register the handlers required for the handler to work."""
-        if self._dispatcher is not None:
-            self._dispatcher.register_handler(
-                GatewayReceiveOpcode.HEARTBEAT, self._on_heartbeat
-            )
-            self._dispatcher.register_handler(
-                GatewayReceiveOpcode.HEARTBEAT_ACK, self._on_heartbeat_acknowledge
-            )
-            self._dispatcher.register_handler(
-                GatewayReceiveOpcode.DISPATCH, self._on_dispatch
-            )
+        if self._dispatcher is None:
+            raise GatewayException("Dispatcher not set")
+
+        self._dispatcher.register_handler(
+            GatewayReceiveOpcode.HEARTBEAT, self._on_heartbeat
+        )
+        self._dispatcher.register_handler(
+            GatewayReceiveOpcode.HEARTBEAT_ACK, self._on_heartbeat_acknowledge
+        )
+        self._dispatcher.register_handler(
+            GatewayReceiveOpcode.DISPATCH, self._on_dispatch
+        )
 
     async def _heartbeat_loop(self) -> None:
         """Send heartbeats at the specified interval."""
         if self._heartbeat_interval_ms is None:
-            return
+            raise GatewayException("Heartbeat interval not set")
+
+        self._logger.debug("Starting heartbeat loop")
 
         while True:
-            await asyncio.sleep(self._heartbeat_interval_ms)
-
             if not self._last_heartbeat_acknowledged:
                 self._logger.debug("Heartbeat not acknowledged, stopping")
                 break
 
             await self._send_heartbeat()
-
             self._last_heartbeat_acknowledged = False
+
+            await asyncio.sleep(self._heartbeat_interval_ms / 1000)
 
     async def _send_heartbeat(self) -> None:
         """Send a heartbeat to the gateway."""
-        if self._sender is not None:
-            self._logger.debug("Sending heartbeat")
-            await self._sender.send(
-                GatewayHeartbeatMessage(data=self._last_sequence_number)
-            )
+        if self._sender is None:
+            raise GatewayException("Sender not set")
+
+        self._logger.debug("Sending heartbeat")
+        await self._sender.send(
+            GatewayHeartbeatMessage(data=self._last_sequence_number)
+        )
 
     async def _on_heartbeat(self, _: GatewayHeartbeatEventPayload) -> None:
         """Handle a heartbeat event by sending a heartbeat back."""
@@ -113,6 +121,7 @@ class HeartbeatHandler:
         Handle a heartbeat acknowledge event by setting the last heartbeat to
         acknowledged.
         """
+        self._logger.debug("Received heartbeat acknowledge")
         self._last_heartbeat_acknowledged = True
 
     async def _on_dispatch(

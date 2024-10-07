@@ -64,6 +64,11 @@ class GatewayMessageReceiver:
         """
         while True:
             message = await ws.receive()
-            self._logger.debug(f"Received message: {message}")
-            json = message.json()
-            await dispatcher.dispatch(json)
+
+            if message.type == aiohttp.WSMsgType.TEXT:
+                self._logger.debug(f"Received message: {message}")
+                json_data = message.json()
+                await dispatcher.dispatch(json_data)
+            else:
+                self._logger.info(f"Received unexpected message: {message}")
+                break

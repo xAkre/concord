@@ -39,7 +39,6 @@ class GatewayMessageSender:
 
         :param message: The message to send.
         """
-        self._logger.debug(f"Sending message: {message}")
         await self.queue.put((priority, message))
 
     def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
@@ -71,5 +70,5 @@ class GatewayMessageSender:
         """
         while True:
             (_, message) = await self.queue.get()
-            self._logger.debug(f"Sending message: {message}")
-            await ws.send_json(message.serialize())
+            self._logger.debug(f"Sending message: {message.serialize()}")
+            await ws.send_str(message.serialize())
