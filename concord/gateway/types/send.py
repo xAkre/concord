@@ -56,6 +56,7 @@ class GatewayMessage[T]:
         )
 
 
+@dataclasses.dataclass(kw_only=True)
 class GatewayHeartbeatMessage(GatewayMessage[int | None]):
     """
     Represents a heartbeat message to be sent to the gateway.
@@ -78,6 +79,7 @@ class GatewayResumeMessageData(typing.TypedDict):
     seq: int
 
 
+@dataclasses.dataclass(kw_only=True)
 class GatewayResumeMessage(GatewayMessage[GatewayResumeMessageData]):
     """
     Represents a resume message to be sent to the gateway.
