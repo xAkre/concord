@@ -11,6 +11,8 @@ __all__ = (
     "GatewaySendOpcode",
     "GatewayMessage",
     "GatewayHeartbeatMessage",
+    "GatewayResumeMessageData",
+    "GatewayResumeMessage",
     "GatewayIdentifyMessageData",
     "GatewayIdentifyMessageConnectionProperties",
     "GatewayIdentifyMessage",
@@ -63,6 +65,28 @@ class GatewayHeartbeatMessage(GatewayMessage[int | None]):
     """
 
     opcode: typing.Literal[GatewaySendOpcode.HEARTBEAT] = GatewaySendOpcode.HEARTBEAT
+
+
+class GatewayResumeMessageData(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/topics/gateway-events#resume)
+    for Discord's documentation.
+    """
+
+    token: str
+    session_id: str
+    seq: int
+
+
+class GatewayResumeMessage(GatewayMessage[GatewayResumeMessageData]):
+    """
+    Represents a resume message to be sent to the gateway.
+
+    See [here](https://discord.com/developers/docs/topics/gateway-events#resume-resume-structure)
+    for Discord's documentation.
+    """
+
+    opcode: typing.Literal[GatewaySendOpcode.RESUME] = GatewaySendOpcode.RESUME
 
 
 class GatewayIdentifyMessageData(typing.TypedDict):
