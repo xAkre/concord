@@ -27,6 +27,7 @@ profile = "black"
 
 [tool.mypy]
 python_version = "3.12"
+strict = true
 enable_incomplete_feature = ["NewGenericSyntax"]
 
 
