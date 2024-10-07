@@ -2,6 +2,7 @@ import asyncio
 import typing
 
 from .types.receive import (
+    GatewayDispatchEventPayload,
     GatewayEventPayload,
     GatewayHeartbeatAcknowledgeEventPayload,
     GatewayHeartbeatEventPayload,
@@ -66,13 +67,20 @@ class GatewayEventDispatcher:
         ],
     ) -> None: ...
 
+    @typing.overload
+    def register_handler(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.DISPATCH],
+        handler: typing.Callable[
+            [GatewayDispatchEventPayload[typing.Any]],
+            typing.Awaitable[None],
+        ],
+    ) -> None: ...
+
     def register_handler(
         self,
         opcode: GatewayReceiveOpcode,
-        handler: typing.Callable[
-            [GatewayEventPayload[typing.Any, typing.Any]],
-            typing.Awaitable[None],
-        ],
+        handler: typing.Any,
     ) -> None:
         """
         Register a handler for an event.
