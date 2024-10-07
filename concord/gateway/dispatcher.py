@@ -1,8 +1,12 @@
 import asyncio
 import typing
 
-from .types.common import GatewayEventPayload, GatewayReceiveOpcode
-from .types.receive import GatewayHelloEventPayload, GatewayReconnectEventPayload
+from .types.common import GatewayEventPayload
+from .types.receive import (
+    GatewayHelloEventPayload,
+    GatewayReceiveOpcode,
+    GatewayReconnectEventPayload,
+)
 
 __all__ = ("GatewayEventDispatcher",)
 

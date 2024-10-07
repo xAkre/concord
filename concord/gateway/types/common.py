@@ -1,10 +1,11 @@
 import enum
 import typing
 
+from concord.gateway.types.receive import GatewayReceiveOpcode
+
 __all__ = (
     "GatewayOpcode",
     "GatewaySendOpcode",
-    "GatewayReceiveOpcode",
     "GatewayEventPayload",
     "GatewayIntents",
 )
@@ -43,20 +44,6 @@ class GatewaySendOpcode(enum.IntEnum):
     RESUME = 6
     REQUEST_GUILD_MEMBERS = 8
     REQUEST_SOUNDBOARD_SOUNDS = 31
-
-
-class GatewayReceiveOpcode(enum.IntEnum):
-    """
-    See [here](https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway)
-    for Discord's documentation.
-    """
-
-    DISPATCH = 0
-    HEARTBEAT = 1
-    RECONNECT = 7
-    INVALID_SESSION = 9
-    HELLO = 10
-    HEARTBEAT_ACK = 11
 
 
 class GatewayEventPayload[Op: GatewayReceiveOpcode, Data](typing.TypedDict):

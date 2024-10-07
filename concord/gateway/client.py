@@ -9,8 +9,7 @@ from .emitter import GatewayMessageEmitter
 from .errors import GatewayConnectionException, GatewayException
 from .intents import Intents
 from .receiver import GatewayMessageReceiver
-from .types.common import GatewayReceiveOpcode
-from .types.receive import GatewayHelloEventPayload
+from .types.receive import GatewayHelloEventPayload, GatewayReceiveOpcode
 
 __all__ = ("GatewayClient",)
 
