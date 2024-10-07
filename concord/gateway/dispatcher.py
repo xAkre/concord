@@ -3,6 +3,8 @@ import typing
 
 from .types.receive import (
     GatewayEventPayload,
+    GatewayHeartbeatAcknowledgeEventPayload,
+    GatewayHeartbeatEventPayload,
     GatewayHelloEventPayload,
     GatewayReceiveOpcode,
     GatewayReconnectEventPayload,
@@ -46,6 +48,24 @@ class GatewayEventDispatcher:
         ],
     ) -> None: ...
 
+    @typing.overload
+    def register_handler(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT],
+        handler: typing.Callable[
+            [GatewayHeartbeatEventPayload], typing.Awaitable[None]
+        ],
+    ) -> None: ...
+
+    @typing.overload
+    def register_handler(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT_ACK],
+        handler: typing.Callable[
+            [GatewayHeartbeatAcknowledgeEventPayload], typing.Awaitable[None]
+        ],
+    ) -> None: ...
+
     def register_handler(
         self,
         opcode: GatewayReceiveOpcode,
@@ -75,7 +95,7 @@ class GatewayEventDispatcher:
         """
         opcode = payload["op"]
 
-        if not opcode in GatewayReceiveOpcode:
+        if opcode not in GatewayReceiveOpcode:
             return
 
         if opcode in self.handlers:

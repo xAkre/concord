@@ -6,6 +6,8 @@ __all__ = (
     "GatewayEventPayload",
     "GatewayHelloEventPayloadData",
     "GatewayHelloEventPayload",
+    "GatewayHeartbeatEventPayload",
+    "GatewayHeartbeatAcknowledgeEventPayload",
     "GatewayReconnectEventPayload",
 )
 
@@ -47,6 +49,14 @@ class GatewayHelloEventPayloadData(typing.TypedDict):
 
 GatewayHelloEventPayload = GatewayEventPayload[
     typing.Literal[GatewayReceiveOpcode.HELLO], GatewayHelloEventPayloadData
+]
+
+GatewayHeartbeatEventPayload = GatewayEventPayload[
+    typing.Literal[GatewayReceiveOpcode.HEARTBEAT], typing.Literal[None]
+]
+
+GatewayHeartbeatAcknowledgeEventPayload = GatewayEventPayload[
+    typing.Literal[GatewayReceiveOpcode.HEARTBEAT_ACK], typing.Literal[None]
 ]
 
 GatewayReconnectEventPayload = GatewayEventPayload[
