@@ -33,6 +33,15 @@ class GatewayEventDispatcher:
                 ]
             ],
         ] = {}
+        self.one_time_handlers: typing.Dict[
+            GatewayReceiveOpcode,
+            typing.List[
+                typing.Callable[
+                    [GatewayEventPayload[GatewayReceiveOpcode, typing.Any]],
+                    typing.Awaitable[None],
+                ]
+            ],
+        ] = {}
         self._logger = logger
 
     @typing.overload
@@ -95,6 +104,67 @@ class GatewayEventDispatcher:
 
         self.handlers[opcode].append(handler)
 
+    @typing.overload
+    def on_next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HELLO],
+        handler: typing.Callable[[GatewayHelloEventPayload], typing.Awaitable[None]],
+    ) -> None: ...
+
+    @typing.overload
+    def on_next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.RECONNECT],
+        handler: typing.Callable[
+            [GatewayReconnectEventPayload], typing.Awaitable[None]
+        ],
+    ) -> None: ...
+
+    @typing.overload
+    def on_next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT],
+        handler: typing.Callable[
+            [GatewayHeartbeatEventPayload], typing.Awaitable[None]
+        ],
+    ) -> None: ...
+
+    @typing.overload
+    def on_next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT_ACK],
+        handler: typing.Callable[
+            [GatewayHeartbeatAcknowledgeEventPayload], typing.Awaitable[None]
+        ],
+    ) -> None: ...
+
+    @typing.overload
+    def on_next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.DISPATCH],
+        handler: typing.Callable[
+            [GatewayDispatchEventPayload[typing.Any]],
+            typing.Awaitable[None],
+        ],
+    ) -> None: ...
+
+    def on_next(
+        self,
+        opcode: GatewayReceiveOpcode,
+        handler: typing.Any,
+    ) -> None:
+        """
+        Register a one-time handler for an event. This handler will be called once
+        and then removed.
+
+        :param opcode: The opcode of the event to register the handler for.
+        :param handler: The handler to register.
+        """
+        if opcode not in self.one_time_handlers:
+            self.one_time_handlers[opcode] = []
+
+        self.one_time_handlers[opcode].append(handler)
+
     async def dispatch(
         self, payload: GatewayEventPayload[GatewayReceiveOpcode, typing.Any]
     ) -> None:
@@ -116,3 +186,16 @@ class GatewayEventDispatcher:
                     await handler(payload)
                 else:
                     handler(payload)
+
+        if opcode in self.one_time_handlers:
+            for handler in self.one_time_handlers[opcode]:
+                self._logger.debug(
+                    f"Dispatching event {opcode} to one-time handler {handler}"
+                )
+
+                if asyncio.iscoroutinefunction(handler):
+                    await handler(payload)
+                else:
+                    handler(payload)
+
+            self.one_time_handlers.pop(opcode)
