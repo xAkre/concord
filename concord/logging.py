@@ -13,7 +13,7 @@ def setup_logger(
     ) = Sentinel.NOT_GIVEN,
 ) -> None:
     """
-    Setup the logger for concord.
+    Setup the logger for Concord.
 
     :param log_level: The log level to set the logger to.
     :param handler: The handler to use for the logger. If `None` is passed,
