@@ -60,25 +60,43 @@ class GatewayClient:
                 self._sender._send_loop_task,
             )
 
-    async def close(self) -> None:
-        """Close the gateway client."""
-        self._logger.debug("Closing gateway client")
-        await self._receiver.stop()
-        self._logger.debug("Receiver stopped")
-        await self._sender.stop()
-        self._logger.debug("Sender stopped")
+    async def stop(self) -> None:
+        """Stop the gateway client."""
+        self._logger.info("Closing gateway client")
+
+        if self._receiver:
+            try:
+                await self._receiver.stop()
+            except asyncio.CancelledError:
+                pass
+
+        if self._sender:
+            try:
+                await self._sender.stop()
+            except asyncio.CancelledError:
+                pass
 
         if self._heartbeat_handler:
-            await self._heartbeat_handler.stop()
-            self._logger.debug("Heartbeat handler stopped")
+            try:
+                await self._heartbeat_handler.stop()
+            except asyncio.CancelledError:
+                pass
 
         if self._ws:
-            await self._ws.close()
-            self._logger.debug("WebSocket closed")
+            try:
+                await self._ws.close()
+            except asyncio.CancelledError:
+                self._logger.debug("WebSocket closed")
 
         if self._session:
-            await self._session.close()
-            self._logger.debug("Session closed")
+            try:
+                await self._session.close()
+            except asyncio.CancelledError:
+                self._logger.debug("Session closed")
+
+        self._logger.info("Gateway client closed")
+
+        raise asyncio.CancelledError
 
     async def _establish_connection(self) -> None:
         """Establish a connection to the gateway."""
