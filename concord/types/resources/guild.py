@@ -41,6 +41,7 @@ __all__ = (
     "GuildIntegrationExpireBehavior",
     "GuildIntegrationAccount",
     "GuildIntegrationApplication",
+    "UnavailableGuild",
 )
 
 
@@ -425,3 +426,13 @@ class GuildIntegrationApplication(typing.TypedDict):
     icon: str | None
     description: str
     bot: typing.NotRequired[User]
+
+
+class UnavailableGuild(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/resources/guild#unavailable-guild-object)
+    for Discord's documentation.
+    """
+
+    id: Snowflake
+    unavailable: bool
