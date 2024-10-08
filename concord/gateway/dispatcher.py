@@ -16,11 +16,7 @@ __all__ = ("GatewayEventDispatcher",)
 
 
 class GatewayEventDispatcher:
-    """
-    This class is responsible for dispatching gateway events to multiple handlers.
-
-    :ivar handlers: A dictionary mapping opcodes to lists of handlers.
-    """
+    """This class is responsible for dispatching gateway events to multiple handlers."""
 
     def __init__(self, logger: logging.Logger = logging.getLogger(__name__)) -> None:
         """
