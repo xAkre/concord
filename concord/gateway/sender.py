@@ -41,13 +41,15 @@ class GatewayMessageSender:
         """
         await self.queue.put((priority, message))
 
-    def start(self, ws: aiohttp.ClientWebSocketResponse) -> None:
+    def start(self, ws: aiohttp.ClientWebSocketResponse) -> asyncio.Task[None]:
         """
         Start the sender with the given websocket.
 
         :param ws: The websocket to emit messages to.
+        :return: The task running the send loop.
         """
         self._send_loop_task = asyncio.create_task(self._send_loop(ws))
+        return self._send_loop_task
 
     async def stop(self) -> None:
         """Stop the sender."""

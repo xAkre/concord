@@ -28,16 +28,18 @@ class GatewayMessageReceiver:
 
     def start(
         self, ws: aiohttp.ClientWebSocketResponse, dispatcher: GatewayEventDispatcher
-    ) -> None:
+    ) -> asyncio.Task[None]:
         """
         Start the receiver with the given websocket and dispatcher.
 
         :param ws: The websocket to receive from.
         :param dispatcher: The dispatcher to pass messages to.
+        :return: The task running the receive loop.
         """
         self._receive_loop_task = asyncio.create_task(
             self._receive_loop(ws, dispatcher)
         )
+        return self._receive_loop_task
 
     async def stop(self) -> None:
         """Stop the receiver."""

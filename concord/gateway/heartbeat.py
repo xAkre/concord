@@ -29,7 +29,7 @@ class HeartbeatHandler:
         self._heartbeat_interval_ms: float | None = None
         self._last_sequence_number: int | None = None
         self._last_heartbeat_acknowledged: bool = True
-        self._heartbeat_task: asyncio.Task[None] | None = None
+        self._heartbeat_loop_task: asyncio.Task[None] | None = None
         self._dispatcher: GatewayEventDispatcher | None = None
         self._sender: GatewayMessageSender | None = None
 
@@ -38,7 +38,7 @@ class HeartbeatHandler:
         interval_ms: float,
         dispatcher: GatewayEventDispatcher,
         sender: GatewayMessageSender,
-    ) -> None:
+    ) -> asyncio.Task[None]:
         """
         Start the handler.
 
@@ -46,6 +46,7 @@ class HeartbeatHandler:
         :param dispatcher: The dispatcher to use to register event handlers
                            required for the handler to work.
         :param sender: The sender to use to send heartbeat messages.
+        :return: The task running the heartbeat loop.
         """
         self._logger.debug("Starting heartbeat handler")
 
@@ -54,16 +55,18 @@ class HeartbeatHandler:
         self._sender = sender
 
         self._register_handlers()
-        self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
+        self._heartbeat_loop_task = asyncio.create_task(self._heartbeat_loop())
+
+        return self._heartbeat_loop_task
 
     async def stop(self) -> None:
         """Stop the handler."""
-        if self._heartbeat_task is not None:
+        if self._heartbeat_loop_task is not None:
             self._logger.debug("Stopping heartbeat handler")
-            self._heartbeat_task.cancel()
+            self._heartbeat_loop_task.cancel()
 
             try:
-                await self._heartbeat_task
+                await self._heartbeat_loop_task
             except asyncio.CancelledError:
                 self._logger.debug("Stopped heartbeat handler")
                 raise
