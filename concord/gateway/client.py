@@ -12,6 +12,11 @@ from .intents import Intents
 from .receiver import GatewayMessageReceiver
 from .sender import GatewayMessageSender
 from .types.receive import GatewayHelloEventPayload, GatewayReceiveOpcode
+from .types.send import (
+    GatewayIdentifyMessage,
+    GatewayIdentifyMessageConnectionProperties,
+    GatewayIdentifyMessageData,
+)
 
 __all__ = ("GatewayClient",)
 
@@ -44,9 +49,16 @@ class GatewayClient:
         self._heartbeat_handler = HeartbeatHandler()
         self._session: aiohttp.ClientSession | None = None
         self._ws: aiohttp.ClientWebSocketResponse | None = None
+        self._token: str | None = None
 
-    async def start(self) -> None:
-        """Start the gateway client."""
+    async def start(self, token: str) -> None:
+        """
+        Start the gateway client.
+
+        :param token: The token to use for authentication.
+        """
+        self._token = token
+
         self._logger.info("Starting gateway client")
         await self._establish_connection()
         self._setup_receiver()
@@ -138,6 +150,28 @@ class GatewayClient:
         self._logger.debug("Starting heartbeat handler")
         self._heartbeat_handler.start(
             payload["d"]["heartbeat_interval"], self._dispatcher, self._sender
+        )
+        await self._identify()
+
+    async def _identify(self) -> None:
+        """Identify with the gateway."""
+        self._logger.debug("Identifying with the gateway")
+
+        if self._token is None:
+            raise GatewayException("Token is not set.")
+
+        await self._sender.send(
+            GatewayIdentifyMessage(
+                data=GatewayIdentifyMessageData(
+                    token=self._token,
+                    intents=int(self.intents),
+                    properties=GatewayIdentifyMessageConnectionProperties(
+                        os="linux",
+                        browser="concord",
+                        device="concord",
+                    ),
+                )
+            )
         )
 
     def _get_ws_url(self) -> str:
