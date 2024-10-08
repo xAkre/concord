@@ -1,8 +1,13 @@
 # mypy: disable-error-code="misc"
 # This is needed because Mypy complains when overriding fields in a TypedDict.
 
+import collections.abc
 import enum
 import typing
+
+from concord.types.resources.application import PartialApplication
+from concord.types.resources.guild import UnavailableGuild
+from concord.types.resources.user import User
 
 __all__ = (
     "GatewayReceiveOpcode",
@@ -13,6 +18,8 @@ __all__ = (
     "GatewayHeartbeatAcknowledgeEventPayload",
     "GatewayReconnectEventPayload",
     "GatewayDispatchEventPayload",
+    "GatewayReadyEventPayloadData",
+    "GatewayReadyEventPayload",
 )
 
 
@@ -94,3 +101,26 @@ class GatewayDispatchEventPayload[T](
 
     s: int
     t: str
+
+
+class GatewayReadyEventPayloadData(typing.TypedDict):
+    """
+    See [here](https://discord.com/developers/docs/topics/gateway#ready)
+    for Discord's documentation.
+    """
+
+    v: int
+    user: typing.Dict[str, User]
+    guilds: collections.abc.Sequence[UnavailableGuild]
+    session_id: str
+    resume_gateway_url: str
+    shard: typing.NotRequired[typing.Tuple[int, int]]
+    application: PartialApplication
+    """Contains ID and flags."""
+
+
+GatewayReadyEventPayload = GatewayDispatchEventPayload[GatewayReadyEventPayloadData]
+"""
+See [here](https://discord.com/developers/docs/topics/gateway#ready)
+for Discord's documentation.
+"""
