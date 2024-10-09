@@ -11,6 +11,8 @@ from concord.types.resources.user import User
 
 __all__ = (
     "GatewayReceiveOpcode",
+    "GatewayCloseEventCode",
+    "GatewayReconnectableCloseEventCode",
     "GatewayEventPayload",
     "GatewayHelloEventPayloadData",
     "GatewayHelloEventPayload",
@@ -35,6 +37,44 @@ class GatewayReceiveOpcode(enum.IntEnum):
     INVALID_SESSION = 9
     HELLO = 10
     HEARTBEAT_ACK = 11
+
+
+class GatewayCloseEventCode(enum.IntEnum):
+    """
+    See [here](https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes)
+    for Discord's documentation.
+    """
+
+    UNKNOWN_ERROR = 4000
+    UNKNOWN_OPCODE = 4001
+    DECODE_ERROR = 4002
+    NOT_AUTHENTICATED = 4003
+    AUTHENTICATION_FAILED = 4004
+    ALREADY_AUTHENTICATED = 4005
+    INVALID_SEQ = 4007
+    RATE_LIMITED = 4008
+    SESSION_TIMEOUT = 4009
+    INVALID_SHARD = 4010
+    SHARDING_REQUIRED = 4011
+    INVALID_API_VERSION = 4012
+    INVALID_INTENT = 4013
+    DISALLOWED_INTENT = 4014
+
+
+class GatewayReconnectableCloseEventCode(enum.IntEnum):
+    """
+    See [here](https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes)
+    for Discord's documentation.
+    """
+
+    UNKNOWN_ERROR = 4000
+    UNKNOWN_OPCODE = 4001
+    DECODE_ERROR = 4002
+    NOT_AUTHENTICATED = 4003
+    ALREADY_AUTHENTICATED = 4005
+    INVALID_SEQ = 4007
+    RATE_LIMITED = 4008
+    SESSION_TIMEOUT = 4009
 
 
 class GatewayEventPayload[Op: GatewayReceiveOpcode, Data](typing.TypedDict):
