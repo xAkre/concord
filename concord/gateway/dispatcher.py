@@ -18,10 +18,15 @@ __all__ = ("GatewayEventDispatcher",)
 class GatewayEventDispatcher:
     """This class is responsible for dispatching gateway events to multiple handlers."""
 
-    def __init__(self, logger: logging.Logger = logging.getLogger(__name__)) -> None:
+    def __init__(
+        self,
+        loop: asyncio.AbstractEventLoop,
+        logger: logging.Logger = logging.getLogger(__name__),
+    ) -> None:
         """
         Initialize the dispatcher.
 
+        :param loop: The event loop to use.
         :param logger: The logger to use. Defaults to the logger of this module.
         """
         self.handlers: typing.Dict[
@@ -42,6 +47,10 @@ class GatewayEventDispatcher:
                 ]
             ],
         ] = {}
+        self.one_time_futures: typing.Dict[
+            GatewayReceiveOpcode, typing.List[asyncio.Future[typing.Any]]
+        ] = {}
+        self._loop = loop
         self._logger = logger
 
     @typing.overload
@@ -165,6 +174,54 @@ class GatewayEventDispatcher:
 
         self.one_time_handlers[opcode].append(handler)
 
+    @typing.overload
+    def next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HELLO],
+    ) -> typing.Awaitable[GatewayHelloEventPayload]: ...
+
+    @typing.overload
+    def next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.RECONNECT],
+    ) -> typing.Awaitable[GatewayReconnectEventPayload]: ...
+
+    @typing.overload
+    def next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT],
+    ) -> typing.Awaitable[GatewayHeartbeatEventPayload]: ...
+
+    @typing.overload
+    def next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.HEARTBEAT_ACK],
+    ) -> typing.Awaitable[GatewayHeartbeatAcknowledgeEventPayload]: ...
+
+    @typing.overload
+    def next(
+        self,
+        opcode: typing.Literal[GatewayReceiveOpcode.DISPATCH],
+    ) -> typing.Awaitable[GatewayDispatchEventPayload[typing.Any]]: ...
+
+    def next(
+        self,
+        opcode: typing.Any,
+    ) -> typing.Awaitable[typing.Any]:
+        """
+        Wait for the next event of the given opcode and return the payload.
+
+        :param opcode: The opcode of the event to wait for.
+        """
+        future = self._loop.create_future()
+
+        if opcode not in self.one_time_futures:
+            self.one_time_futures[opcode] = []
+
+        self.one_time_futures[opcode].append(future)
+
+        return future
+
     async def dispatch(
         self, payload: GatewayEventPayload[GatewayReceiveOpcode, typing.Any]
     ) -> None:
@@ -199,3 +256,13 @@ class GatewayEventDispatcher:
                     handler(payload)
 
             self.one_time_handlers.pop(opcode)
+
+        if opcode in self.one_time_futures:
+            for future in self.one_time_futures[opcode]:
+                self._logger.debug(
+                    f"Dispatching event {opcode} to one-time future {future}"
+                )
+
+                future.set_result(payload)
+
+            self.one_time_futures.pop(opcode)
