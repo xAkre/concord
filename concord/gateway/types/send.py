@@ -55,6 +55,10 @@ class GatewayMessage[T]:
             }
         )
 
+    def __lt__(self, _: GatewayMessage[typing.Any]) -> bool:
+        """Required for the priority queue."""
+        return True
+
 
 @dataclasses.dataclass(kw_only=True)
 class GatewayHeartbeatMessage(GatewayMessage[int | None]):
