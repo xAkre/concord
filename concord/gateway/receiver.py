@@ -16,13 +16,16 @@ class GatewayMessageReceiver:
 
     def __init__(
         self,
+        loop: asyncio.AbstractEventLoop,
         logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
         """
         Initialize the receiver.
 
+        :param loop: The event loop to use.
         :param logger: The logger to use. Defaults to the logger of this module.
         """
+        self._loop = loop
         self._logger = logger
         self._receive_loop_task: asyncio.Task[None] | None = None
 
@@ -36,9 +39,11 @@ class GatewayMessageReceiver:
         :param dispatcher: The dispatcher to pass messages to.
         :return: The task running the receive loop.
         """
-        self._receive_loop_task = asyncio.create_task(
+        self._logger.debug("Starting receiver")
+        self._receive_loop_task = self._loop.create_task(
             self._receive_loop(ws, dispatcher)
         )
+
         return self._receive_loop_task
 
     async def stop(self) -> None:

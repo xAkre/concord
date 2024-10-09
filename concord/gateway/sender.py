@@ -18,13 +18,16 @@ class GatewayMessageSender:
 
     def __init__(
         self,
+        loop: asyncio.AbstractEventLoop,
         logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
         """
         Initialize the sender.
 
+        :param loop: The event loop to use.
         :param logger: The logger to use. Defaults to the logger of this module.
         """
+        self._loop = loop
         self.queue: asyncio.PriorityQueue[
             typing.Tuple[int, GatewayMessage[typing.Any]]
         ] = asyncio.PriorityQueue()
@@ -48,7 +51,9 @@ class GatewayMessageSender:
         :param ws: The websocket to emit messages to.
         :return: The task running the send loop.
         """
+        self._logger.debug("Starting sender")
         self._send_loop_task = asyncio.create_task(self._send_loop(ws))
+
         return self._send_loop_task
 
     async def stop(self) -> None:
@@ -72,5 +77,6 @@ class GatewayMessageSender:
         """
         while True:
             (_, message) = await self.queue.get()
-            self._logger.debug(f"Sending message: {message.serialize()}")
-            await ws.send_str(message.serialize())
+            serialized = message.serialize()
+            self._logger.debug(f"Sending message: {serialized}")
+            await ws.send_str(serialized)

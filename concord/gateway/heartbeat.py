@@ -19,12 +19,18 @@ __all__ = ("HeartbeatHandler",)
 class HeartbeatHandler:
     """This class is responsible for handling heartbeats for a gateway client."""
 
-    def __init__(self, logger: logging.Logger = logging.getLogger(__name__)) -> None:
+    def __init__(
+        self,
+        loop: asyncio.AbstractEventLoop,
+        logger: logging.Logger = logging.getLogger(__name__),
+    ) -> None:
         """
         Initialize the heartbeat handler.
 
+        :param loop: The event loop to use.
         :param logger: The logger to use. Defaults to the logger of this module.
         """
+        self._loop = loop
         self._logger = logger
         self._heartbeat_interval_ms: float | None = None
         self._last_sequence_number: int | None = None
@@ -55,13 +61,16 @@ class HeartbeatHandler:
         self._sender = sender
 
         self._register_handlers()
-        self._heartbeat_loop_task = asyncio.create_task(self._heartbeat_loop())
+        self._heartbeat_loop_task = self._loop.create_task(self._heartbeat_loop())
 
         return self._heartbeat_loop_task
 
     async def stop(self) -> None:
         """Stop the handler."""
-        if self._heartbeat_loop_task is not None:
+        if (
+            self._heartbeat_loop_task is not None
+            and not self._heartbeat_loop_task.done()
+        ):
             self._logger.debug("Stopping heartbeat handler")
             self._heartbeat_loop_task.cancel()
 
