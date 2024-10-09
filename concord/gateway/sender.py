@@ -1,4 +1,5 @@
 import asyncio
+import enum
 import logging
 import typing
 
@@ -6,7 +7,19 @@ import aiohttp
 
 from .types.send import GatewayMessage
 
-__all__ = ("GatewayMessageSender",)
+__all__ = (
+    "MessagePriority",
+    "GatewayMessageSender",
+)
+
+
+class MessagePriority(enum.IntEnum):
+    """Priority levels for messages."""
+
+    EMERGENCY = 0
+    HIGH = 10
+    MEDIUM = 100
+    LOW = 1000
 
 
 class GatewayMessageSender:
@@ -35,7 +48,9 @@ class GatewayMessageSender:
         self._send_loop_task: asyncio.Task[None] | None = None
 
     async def send(
-        self, message: GatewayMessage[typing.Any], priority: int = 0
+        self,
+        message: GatewayMessage[typing.Any],
+        priority: MessagePriority = MessagePriority.MEDIUM,
     ) -> None:
         """
         Send a message to the gateway.
