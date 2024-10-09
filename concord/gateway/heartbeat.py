@@ -13,10 +13,10 @@ from .types.receive import (
 )
 from .types.send import GatewayHeartbeatMessage
 
-__all__ = ("HeartbeatHandler",)
+__all__ = ("GatewayHeartbeatHandler",)
 
 
-class HeartbeatHandler:
+class GatewayHeartbeatHandler:
     """This class is responsible for handling heartbeats for a gateway client."""
 
     def __init__(
